@@ -1,0 +1,51 @@
+{
+    "schemaVersion": "1.0",
+    "artifacts": {
+        "<TEMPLATE>": {
+            "type": "executable",
+            "version": "<VERSION>",
+            "variants": [
+                {
+                  "path": "<TEMPLATE>_<VERSION>_amd64.deb",
+                  "supportedTriples": ["x86_64-unknown-linux-deb"]
+                },
+                {
+                  "path": "<TEMPLATE>_<VERSION>_amd64.rpm",
+                  "supportedTriples": ["x86_64-unknown-linux-rpm"]
+                },
+                {
+                  "path": "<TEMPLATE>_<VERSION>_arm64.deb",
+                  "supportedTriples": ["arm64-unknown-linux-deb"]
+                },
+                {
+                  "path": "<TEMPLATE>_<VERSION>_arm64.rpm",
+                  "supportedTriples": ["arm64-unknown-linux-rpm"]
+                },
+                {
+                  "path": "<TEMPLATE>_<VERSION>_Linux_arm64",
+                  "supportedTriples": ["arm64-unknown-linux"]
+                },
+                {
+                  "path": "<TEMPLATE>_<VERSION>_Linux_x86_64",
+                  "supportedTriples": ["x86_64-unknown-linux"]
+                },
+                {
+                  "path": "<TEMPLATE>_<VERSION>_MacOS_arm64",
+                  "supportedTriples": ["arm64-apple-macosx"]
+                },
+                {
+                  "path": "<TEMPLATE>_<VERSION>_MacOS_x86_64",
+                  "supportedTriples": ["x86_64-apple-macos"]
+                },
+                {
+                  "path": "<TEMPLATE>_<VERSION>_Windows_arm64.exe",
+                  "supportedTriples": ["arm64-unknown-windows"]
+                },
+                {
+                  "path": "<TEMPLATE>_<VERSION>_Windows_x86_64.exe",
+                  "supportedTriples": ["x86_64-unknown-windows"]
+                }
+            ]
+        }
+    }
+}

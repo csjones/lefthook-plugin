@@ -1,0 +1,23 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  macOS:
+    name: Test
+    runs-on: macOS-13
+    steps:
+    - uses: actions/checkout@v3
+    - name: List available plugins in macOS
+      run: swift package plugin template
+
+  Linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build Docker image
+      run: docker build .

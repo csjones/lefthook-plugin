@@ -1,0 +1,39 @@
+name: Check GitHub Release
+
+on: 
+  schedule: 
+    # Daily at 8:20 UTC
+    - cron: '20 8 * * *'
+  # Enables manually running this workflow from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Check GitHub Release
+    runs-on: macOS-13
+    env:
+      BINARY_NAME: lefthook
+      BINARY_REPO: evilmartians/lefthook
+      PLUGIN_REPO: gigabitcoin/template-plugin
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - name: Get lastest binary and plugin versions
+      run: |
+          SEMANTIC_VERSIONING_REGEX="(v[0-9]+\.[0-9]+\.[0-9]+)|(0\.[0-9]+\.[0-9]+)"
+
+          PLUGIN_RELEASE=$(gh release list -R gigabitcoin/template-plugin -L 1)
+          BINARY_RELEASE=$(gh release list -R evilmartians/lefthook -L 1)
+
+          echo "PLUGIN_VERSION=$(echo $PLUGIN_RELEASE | grep -oE $SEMANTIC_VERSIONING_REGEX | head -n1)" >> $GITHUB_ENV
+          echo "BINARY_VERSION=$(echo $BINARY_RELEASE | grep -oE $SEMANTIC_VERSIONING_REGEX | head -n1)" >> $GITHUB_ENV
+    - name: Update GitHub Env Vars
+      run: |
+          # The example binary includes a leading 'v' in the release version number. We drop it on the next line.
+          echo "TRIMMED_BINARY_VERSION=$(echo $BINARY_VERSION | cut -c2-)" >> $GITHUB_ENV
+    - uses: ./.github/workflows/publish-artifact-bundle.yml
+      with:
+        binary_name: ${{ env.BINARY_NAME }}
+        binary_repo: ${{ env.BINARY_REPO }}
+        binary_version: ${{ env.BINARY_RELEASE }}
+        plugin_repo: ${{ env.PLUGIN_REPO }}
+      if: ${{ env.PLUGIN_VERSION == env.TRIMMED_BINARY_VERSION }}

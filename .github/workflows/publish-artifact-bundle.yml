@@ -1,0 +1,93 @@
+name: Publish Artifact Bundle
+
+on:
+  workflow_call:
+    inputs:
+      binary_name:
+        required: true
+        type: string
+      binary_repo:
+        required: true
+        type: string
+      binary_version:
+        required: true
+        type: string
+      plugin_repo:
+        required: true
+        type: string
+
+  # Enables manually running this workflow from the Actions tab
+  workflow_dispatch:
+    inputs:
+      binary_name:
+        required: true
+        type: string
+      binary_repo:
+        required: true
+        type: string
+      binary_version:
+        required: true
+        type: string
+      plugin_repo:
+        required: true
+        type: string
+
+jobs:
+  publish:
+    name: Publish Artifact Bundle
+    runs-on: macOS-13
+    env:
+      PLUGIN_VERSION: ${{ inputs.binary_version }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        path: ${{ inputs.binary_name }}
+    - name: Get latest binaries
+      run: |
+          gh release download ${{ inputs.binary_version }} \
+                            -R "${{ inputs.binary_repo }}" \
+                            -p '*MacOS*64' \
+                            -p '*Linux*64' \
+                            -p '*Windows*64.exe' \
+                            -p '*.deb' \
+                            -p '*.rpm' \
+                            -D '${{ inputs.binary_name }}/Resources/template.artifactbundle'
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Update GitHub Env Vars
+      run: |
+          # The example binary includes a leading 'v' in the release version number. We drop it on the next line.
+          echo "PLUGIN_VERSION=$(echo $PLUGIN_VERSION | cut -c2-)" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${{ inputs.binary_name }}.artifactbundle.zip" >> $GITHUB_ENV
+          echo "ARTIFACT_PATH=${{ inputs.binary_name }}/Resources/template.artifactbundle" >> $GITHUB_ENV
+    - name: Set info.json version
+      run: |
+          sed -i '' "s/<VERSION>/${{ env.PLUGIN_VERSION }}/g" ${{ env.ARTIFACT_PATH }}/info.json
+          sed -i '' "s/<TEMPLATE>/${{ inputs.binary_name }}/g" ${{ env.ARTIFACT_PATH }}/info.json
+    - name: Add executable permissions
+      run: |
+          # The example binaries for MacOS need the executable permission added.
+          chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_MacOS_arm64"
+          chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_MacOS_x86_64"
+    - name: Zip Artifact Bundle
+      run: |
+          zip -9 -r ${{ env.ARTIFACT_NAME }} ${{ env.ARTIFACT_PATH }}
+    - name: Reset Git Repo
+      run: |
+          (cd ${{ inputs.binary_name }} && git reset --hard)
+    - name: Update Package.swift
+      run: |
+          sed -i '' 's/checksum: ".*"/checksum: "${{ hashFiles( env.ARTIFACT_NAME ) }}"/g' ${{ inputs.binary_name }}/Package.swift
+          sed -i '' -E "s/\/[0-9]+\.[0-9]+\.[0-9]+\//\/1.4.10\//" ${{ inputs.binary_name }}/Package.swift
+    - name: Push Changes to GitHub
+      run: |
+          (cd ${{ inputs.binary_name }} && git commit -am "Updating ${{ inputs.binary_name }} to ${{ env.PLUGIN_VERSION }}" && git push origin)
+    - name: Create GitHub Release
+      run: |
+          echo $(cd ${{ inputs.binary_name }} && git rev-parse HEAD)
+          gh release create ${{ env.PLUGIN_VERSION }} \
+                     -R ${{ inputs.plugin_repo }} \
+                     --target $(cd ${{ inputs.binary_name }} && git rev-parse HEAD) \
+                     ${{ env.ARTIFACT_NAME }}
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
