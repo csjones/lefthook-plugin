@@ -6,28 +6,12 @@
             "version": "<VERSION>",
             "variants": [
                 {
-                  "path": "<TEMPLATE>_<VERSION>_amd64.deb",
-                  "supportedTriples": ["x86_64-unknown-linux-deb"]
-                },
-                {
-                  "path": "<TEMPLATE>_<VERSION>_amd64.rpm",
-                  "supportedTriples": ["x86_64-unknown-linux-rpm"]
-                },
-                {
-                  "path": "<TEMPLATE>_<VERSION>_arm64.deb",
-                  "supportedTriples": ["arm64-unknown-linux-deb"]
-                },
-                {
-                  "path": "<TEMPLATE>_<VERSION>_arm64.rpm",
-                  "supportedTriples": ["arm64-unknown-linux-rpm"]
-                },
-                {
                   "path": "<TEMPLATE>_<VERSION>_Linux_arm64",
-                  "supportedTriples": ["arm64-unknown-linux"]
+                  "supportedTriples": ["aarch64-unknown-linux-gnu"]
                 },
                 {
                   "path": "<TEMPLATE>_<VERSION>_Linux_x86_64",
-                  "supportedTriples": ["x86_64-unknown-linux"]
+                  "supportedTriples": ["x86_64-unknown-linux-gnu"]
                 },
                 {
                   "path": "<TEMPLATE>_<VERSION>_MacOS_arm64",

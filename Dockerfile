@@ -8,4 +8,4 @@ ADD . /Linux
 WORKDIR /Linux
 
 # List available plugins in Linux
-RUN swift package plugin template
+RUN swift package plugin lefthook

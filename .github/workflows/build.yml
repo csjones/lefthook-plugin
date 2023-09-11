@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: List available plugins in macOS
-      run: swift package plugin template
+      run: swift package plugin lefthook
 
   Linux:
     runs-on: ubuntu-latest

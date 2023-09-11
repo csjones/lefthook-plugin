@@ -1,6 +1,6 @@
 //
-//  TemplatePlugin.swift
-//  GigaBitcoin/template-plugin
+//  Plugin.swift
+//  csjones/lefthook-plugin
 //
 //  Copyright (c) 2023 GigaBitcoin LLC
 //  Distributed under the MIT software license
@@ -12,15 +12,15 @@ import Foundation
 import PackagePlugin
 
 @main
-struct TemplatePlugin: CommandPlugin {
+struct Plugin: CommandPlugin {
     func performCommand(
         context: PackagePlugin.PluginContext,
         arguments: [String]
     ) async throws {
-        let binary = try context.tool(named: "template")
+        let binary = try context.tool(named: "lefthook")
         let process = Process()
 
-        process.executableURL = URL(filePath: binary.path.string)
+        process.executableURL = URL(fileURLWithPath: binary.path.string)
         process.arguments = arguments
 
         try process.run()
@@ -29,9 +29,11 @@ struct TemplatePlugin: CommandPlugin {
         // Check whether the `template` invocation was successful.
         guard process.terminationReason == .exit && process.terminationStatus == 0 else {
             Diagnostics.error("""
-                'template' invocation failed with a nonzero exit code: '\(process.terminationStatus)'.
+                'lefthook' invocation failed with a nonzero exit code: '\(process.terminationStatus)'.
 
-                See 'swift package plugin template --help' for details.
+                Note: The lefthook plugin requires passing the '--disable-sandbox' flag
+                to the Swift Package Manager because it requires local document access to
+                read files. See 'swift package plugin lefthook --help' for details.
                 """
             )
 

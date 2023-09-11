@@ -3,31 +3,32 @@
 import PackageDescription
 
 let package = Package(
-    name: "template",
+    name: "lefthook",
     products: [
         .plugin(
-            name: "template",
+            name: "lefthook",
             targets: [
-                "TemplatePlugin"
+                "LefthookPlugin"
             ]
         )
     ],
     dependencies: [],
     targets: [
         .plugin(
-            name: "TemplatePlugin",
+            name: "LefthookPlugin",
             capability: .command(
                 intent: .custom(
-                    verb: "template",
-                    description: "Execute commands defined by template."
+                    verb: "lefthook",
+                    description: "Execute commands defined in lefthook.yml."
                 )
             ),
-            dependencies: ["template"]
+            dependencies: ["lefthook"],
+            path: "Plugin"
         ),
-//        .binaryTarget(name: "template", path: "template.artifactbundle.zip"),
+//        .binaryTarget(name: "lefthook", path: "lefthook.artifactbundle.zip"),
         .binaryTarget(
-            name: "template",
-            url: "https://github.com/GigaBitcoin/template-plugin/releases/download/0.0.1/template.artifactbundle.zip",
+            name: "lefthook",
+            url: "https://github.com/csjones/lefthook-plugin/releases/download/0.0.1/lefthook.artifactbundle.zip",
             checksum: "42e1e7a4f7d7586ec6d13b3e03cce5612ac237244cc3cb1e6de7c49416d04520"
         ),
     ],
