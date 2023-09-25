@@ -19,7 +19,7 @@
                 },
                 {
                   "path": "<TEMPLATE>_<VERSION>_MacOS_x86_64",
-                  "supportedTriples": ["x86_64-apple-macos"]
+                  "supportedTriples": ["x86_64-apple-macosx"]
                 },
                 {
                   "path": "<TEMPLATE>_<VERSION>_Windows_arm64.exe",
