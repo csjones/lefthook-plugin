@@ -2,8 +2,8 @@ name: Check GitHub Release
 
 on: 
   schedule: 
-    # Daily at 8:20 UTC
-    - cron: '20 8 * * *'
+    # Daily at 8:20 UTC and 20:20 UTC
+    - cron: '20 8,20 * * *'
   # Enables manually running this workflow from the Actions tab
   workflow_dispatch:
 
