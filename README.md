@@ -25,7 +25,7 @@ import PackageDescription
 let package = Package(
     name: "YourPackageName",
     dependencies: [
-        .package(url: "https://github.com/csjones/lefthook-plugin.git", from: "1.4.11"),
+        .package(url: "https://github.com/csjones/lefthook-plugin.git", exact: "1.6.10"),
     ],
     targets: [
         .executableTarget(name: "YourTargetName")
@@ -40,18 +40,26 @@ This configuration ensures that SPM invokes the plugin, thereby integrating left
 Invoke the plugin directly using the `swift package plugin` CLI:
 
 ```bash
-swift package plugin lefthook --help
+swift package lefthook --help
 ```
+
+Run `lefthook install` to initialize a lefthook.yml config and/or synchronize `.git/hooks/` with your configuration.
+
+```bash
+swift package --disable-sandbox lefthook install
+```
+
+> [!IMPORTANT]  
+> The lefthook plugin necessitates the `--disable-sandbox` flag with the Swift Package Manager due to its requirement for local document access to read files.
 
 To execute the lefthook plugin within your package repository:
 
 ```bash
-swift package --disable-sandbox plugin lefthook run pre-commit
+swift package --disable-sandbox lefthook run pre-commit
 ```
 
-> **Note**: The lefthook plugin necessitates the `--disable-sandbox` flag with the Swift Package Manager due to its requirement for local document access to read files.
-
-For a detailed understanding of lefthook's commands and their usage, refer to [lefthook's official usage documentation](https://github.com/evilmartians/lefthook/blob/master/docs/usage.md).
+> [!NOTE]
+> For a detailed understanding of lefthook's commands and their usage, refer to [lefthook's official usage documentation](https://github.com/evilmartians/lefthook/blob/master/docs/usage.md).
 
 ### Configuration
 
@@ -75,7 +83,8 @@ pre-commit:
       run: git add .
 ```
 
-For a comprehensive understanding and more advanced configurations, refer to [lefthook's official configuration documentation](https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md).
+> [!TIP]
+> For a comprehensive understanding and more advanced configurations, refer to [lefthook's official configuration documentation](https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md).
 
 ## Community and Support
 

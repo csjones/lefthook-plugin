@@ -9,7 +9,7 @@ on:
 jobs:
   macOS:
     name: Test
-    runs-on: macOS-13
+    runs-on: macOS-14
     steps:
     - uses: actions/checkout@v3
     - name: List available plugins in macOS
