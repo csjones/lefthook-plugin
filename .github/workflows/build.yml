@@ -13,7 +13,17 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: List available plugins in macOS
-      run: swift package plugin lefthook
+      run: swift package lefthook
+
+  mint:
+    name: Checks for Mint's package manager
+    runs-on: macOS-14
+    steps:
+    - uses: irgaly/setup-mint@v1
+      with:
+        bootstrap: false
+    - name: Run mint
+      run: mint run ${{ github.repository }}@${{ github.head_ref }} --help
 
   Linux:
     runs-on: ubuntu-latest
