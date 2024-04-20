@@ -1,5 +1,5 @@
 //
-//  Plugin.swift
+//  LefthookPlugin.swift
 //  csjones/lefthook-plugin
 //
 //  Copyright (c) 2023 GigaBitcoin LLC
@@ -12,7 +12,7 @@ import Foundation
 import PackagePlugin
 
 @main
-struct Plugin: CommandPlugin {
+struct LefthookPlugin: CommandPlugin {
     func performCommand(
         context: PackagePlugin.PluginContext,
         arguments: [String]
@@ -33,7 +33,7 @@ struct Plugin: CommandPlugin {
 
                 Note: The lefthook plugin requires passing the '--disable-sandbox' flag
                 to the Swift Package Manager because it requires local document access to
-                read files. See 'swift package plugin lefthook --help' for details.
+                read files. See 'swift package lefthook --help' for details.
                 """
             )
 

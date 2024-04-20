@@ -5,15 +5,22 @@ import PackageDescription
 let package = Package(
     name: "lefthook",
     products: [
-        .plugin(
-            name: "lefthook",
-            targets: [
-                "LefthookPlugin"
-            ]
-        )
+        .executable(name: "lefthook", targets: ["LefthookExecutable"]),
+        .plugin(name: "LefthookPlugin",targets: ["LefthookPlugin"])
     ],
     dependencies: [],
     targets: [
+        .executableTarget(
+            name: "LefthookExecutable",
+            plugins: [
+                .plugin(name: "ArtifactExpander")
+            ]
+        ),
+        .plugin(
+            name: "ArtifactExpander",
+            capability: .buildTool(),
+            dependencies: ["lefthook"]
+        ),
         .plugin(
             name: "LefthookPlugin",
             capability: .command(
@@ -22,10 +29,8 @@ let package = Package(
                     description: "Execute commands defined in lefthook.yml."
                 )
             ),
-            dependencies: ["lefthook"],
-            path: "Plugin"
+            dependencies: ["lefthook"]
         ),
-//        .binaryTarget(name: "lefthook", path: "lefthook.artifactbundle.zip"),
         .binaryTarget(
             name: "lefthook",
             url: "https://github.com/csjones/lefthook-plugin/releases/download/1.6.10/lefthook.artifactbundle.zip",
