@@ -63,10 +63,8 @@ class ArtifactParser {
         // "artifacts/github.com_*/lefthook"
         // The path name is determined by the github repository name.
         if let absolutePathToMintResources = FileSystem.getAbsolutePathThatExists(relativePath: "artifacts"),
-            let absoluteMintArtifactPath = FileSystem.getSubdirectories(atAbsolutePath: absolutePathToMintResources).first(where: { $0.contains("github.com_") }) {
-            if let absolutePath = FileSystem.getAbsolutePathThatExists(relativePath: "\(absoluteMintArtifactPath)/lefthook") {
-                return absolutePath
-            }
+           let absoluteMintArtifactPath = FileSystem.getSubdirectories(atAbsolutePath: absolutePathToMintResources).first(where: { $0.contains("github.com_") })?.appending("/lefthook") {
+            return absoluteMintArtifactPath
         }
         
         return nil
