@@ -1,20 +1,17 @@
 # lefthook-plugin
 
-A Swift Plugin that integrates [lefthook](https://github.com/evilmartians/lefthook), a fast and powerful Git hooks manager, into the Swift Package Manager (SPM) ecosystem. Incorporate `lefthook-plugin` into your `Package.swift` dependencies to utilize lefthook in your Swift projects.
+A Swift Package that integrates [lefthook](https://github.com/evilmartians/lefthook), a fast and powerful Git hooks manager, into the Swift ecosystem. 
 
 ## Features
 
 - **Fast Execution**: Written in Go, lefthook can run commands in parallel.
 - **Powerful Configuration**: Control execution and the files you pass to your commands.
 - **Swift Integration**: Seamlessly integrates with Swift projects through the Swift Package Manager.
-
-## Overview
-
-The Swift Package Manager offers extensibility through plugins. The `lefthook-plugin` leverages the `PackagePlugin` API from the Swift Package Manager, providing a seamless bridge to incorporate lefthook functionalities into Swift projects.
+- **Mint support**: Run lefthook using [mint](https://github.com/yonaskolb/Mint), a package manager for Swift CLI tools. 
 
 ## Installation
 
-### Integrating the lefthook-plugin
+### Using Swift Package Manager plugin 
 
 To utilize the `lefthook-plugin`, include it in the target specification of your Swift Package:
 
@@ -35,7 +32,17 @@ let package = Package(
 
 This configuration ensures that SPM invokes the plugin, thereby integrating lefthook's capabilities into your Swift project.
 
-### Commands
+### Using [mint](https://github.com/yonaskolb/Mint)
+
+```
+$ mint install csjones/lefthook-plugin
+```
+
+## Commands
+
+After `lefthook` is [installed](#installation) in your Swift project, it's time to run it. 
+
+### Using Swift Package Manager plugin 
 
 Invoke the plugin directly using the `swift package plugin` CLI:
 
@@ -53,7 +60,11 @@ swift package --disable-sandbox plugin lefthook run pre-commit
 
 For a detailed understanding of lefthook's commands and their usage, refer to [lefthook's official usage documentation](https://github.com/evilmartians/lefthook/blob/master/docs/usage.md).
 
-### Configuration
+### Using `mint`
+
+After running `mint install csjones/lefthook-plugin` to install the CLI tool, anytime you want to interact with `lefthook`, all you have to do is run `mint run csjones/lefthook-plugin <command>`. Example: `mint run csjones/lefthook-plugin --help`. 
+
+## Configuration
 
 Below is a sample configuration for lefthook:
 
