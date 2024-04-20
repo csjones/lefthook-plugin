@@ -12,10 +12,9 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "LefthookExecutable",
-            path: "Executable",
             plugins: [
                 .plugin(name: "ArtifactExpander")
-            ]            
+            ]
         ),
         .plugin(
             name: "ArtifactExpander",
