@@ -24,6 +24,14 @@ jobs:
         bootstrap: false
     - name: Run mint
       run: mint run ${{ github.repository }}@${{ github.head_ref }} --help
+  
+  swift-executable:
+    name: Checks for running executable with swift run 
+    runs-on: macOS-14
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run executable with Swift 
+      run: swift run --help 
 
   Linux:
     runs-on: ubuntu-latest
