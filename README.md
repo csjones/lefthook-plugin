@@ -22,7 +22,7 @@ import PackageDescription
 let package = Package(
     name: "YourPackageName",
     dependencies: [
-        .package(url: "https://github.com/csjones/lefthook-plugin.git", exact: "1.9.0"),
+        .package(url: "https://github.com/csjones/lefthook-plugin.git", exact: "1.9.1"),
     ],
     targets: [
         .executableTarget(name: "YourTargetName")
