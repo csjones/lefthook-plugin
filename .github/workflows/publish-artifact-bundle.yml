@@ -44,45 +44,52 @@ jobs:
         path: ${{ inputs.binary_name }}
     - name: Get latest binaries
       run: |
-          gh release download ${{ inputs.binary_version }} \
-                            -R "${{ inputs.binary_repo }}" \
-                            -p '*MacOS*64' \
-                            -p '*Linux*64' \
-                            -p '*Windows*64.exe' \
-                            -D '${{ inputs.binary_name }}/Resources/template.artifactbundle'
+        gh release download ${{ inputs.binary_version }} \
+            -R "${{ inputs.binary_repo }}" \
+            -p '*MacOS*64' \
+            -p '*Linux*64' \
+            -p '*Windows*64.exe' \
+            -D '${{ inputs.binary_name }}/Resources/template.artifactbundle'
     - name: Update GitHub Env Vars
       run: |
-          # The example binary includes a leading 'v' in the release version number. We drop it on the next line.
-          echo "PLUGIN_VERSION=$(echo $PLUGIN_VERSION | cut -c2-)" >> $GITHUB_ENV
-          echo "ARTIFACT_NAME=${{ inputs.binary_name }}.artifactbundle.zip" >> $GITHUB_ENV
-          echo "ARTIFACT_PATH=${{ inputs.binary_name }}/Resources/template.artifactbundle" >> $GITHUB_ENV
+        # The example binary includes a leading 'v' in the release version number. We drop it on the next line.
+        echo "PLUGIN_VERSION=$(echo $PLUGIN_VERSION | cut -c2-)" >> $GITHUB_ENV
+        echo "ARTIFACT_NAME=${{ inputs.binary_name }}.artifactbundle.zip" >> $GITHUB_ENV
+        echo "ARTIFACT_PATH=${{ inputs.binary_name }}/Resources/template.artifactbundle" >> $GITHUB_ENV
     - name: Set info.json version
       run: |
-          sed -i '' "s/<VERSION>/${{ env.PLUGIN_VERSION }}/g" ${{ env.ARTIFACT_PATH }}/info.json
-          sed -i '' "s/<TEMPLATE>/${{ inputs.binary_name }}/g" ${{ env.ARTIFACT_PATH }}/info.json
+        sed -i '' "s/<VERSION>/${{ env.PLUGIN_VERSION }}/g" ${{ env.ARTIFACT_PATH }}/info.json
+        sed -i '' "s/<TEMPLATE>/${{ inputs.binary_name }}/g" ${{ env.ARTIFACT_PATH }}/info.json
     - name: Add executable permissions
       run: |
-          chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_Linux_arm64"
-          chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_Linux_x86_64"
-          chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_MacOS_arm64"
-          chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_MacOS_x86_64"
+        chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_Linux_arm64"
+        chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_Linux_x86_64"
+        chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_MacOS_arm64"
+        chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_MacOS_x86_64"
     - name: Zip Artifact Bundle
       run: |
-          (cd ${{ env.ARTIFACT_PATH }} && zip -9 -r ../../../${{ env.ARTIFACT_NAME }} .)
+        (cd ${{ env.ARTIFACT_PATH }} && zip -9 -r ../../../${{ env.ARTIFACT_NAME }} .)
     - name: Reset Git Repo
       run: |
-          (cd ${{ inputs.binary_name }} && git reset --hard)
+        (cd ${{ inputs.binary_name }} && git reset --hard)
     - name: Update Package.swift
       run: |
-          sed -i '' "s/checksum: \".*\"/checksum: \"$(shasum -a 256 ${{ env.ARTIFACT_NAME }} | sed 's/ .*//')\"/g" ${{ inputs.binary_name }}/Package.swift
-          sed -i '' -E "s/\/[0-9]+\.[0-9]+\.[0-9]+\//\/${{ env.PLUGIN_VERSION }}\//" ${{ inputs.binary_name }}/Package.swift
-          sed -i '' -E "s/(https:\/\/github.com\/csjones\/lefthook-plugin.git\", exact: \")([0-9]+\.[0-9]+\.[0-9]+)/\1${{ env.PLUGIN_VERSION }}/" ${{ inputs.binary_name }}/README.md
+        sed -i '' "s/checksum: \".*\"/checksum: \"$(shasum -a 256 ${{ env.ARTIFACT_NAME }} | sed 's/ .*//')\"/g" ${{ inputs.binary_name }}/Package.swift
+        sed -i '' -E "s/\/[0-9]+\.[0-9]+\.[0-9]+\//\/${{ env.PLUGIN_VERSION }}\//" ${{ inputs.binary_name }}/Package.swift
+        sed -i '' -E "s/(https:\/\/github.com\/csjones\/lefthook-plugin.git\", exact: \")([0-9]+\.[0-9]+\.[0-9]+)/\1${{ env.PLUGIN_VERSION }}/" ${{ inputs.binary_name }}/README.md
     - name: Push Changes to GitHub
       run: |
-          (cd ${{ inputs.binary_name }} && git commit -am "Updating ${{ inputs.binary_name }} to ${{ env.PLUGIN_VERSION }}" && git push origin)
+        (cd ${{ inputs.binary_name }} && git commit -am "Updating ${{ inputs.binary_name }} to ${{ env.PLUGIN_VERSION }}" && git push origin)
+    - name: Get Release Notes from Binary Repo
+      run: |
+        gh release view ${{ inputs.binary_version }} \
+            -R "${{ inputs.binary_repo }}" \
+            --json body \
+            --jq '.body' > release_notes.md
     - name: Create GitHub Release
       run: |
-          gh release create ${{ env.PLUGIN_VERSION }} \
-                     -R ${{ inputs.plugin_repo }} \
-                     --target $(cd ${{ inputs.binary_name }} && git rev-parse HEAD) \
-                     ${{ env.ARTIFACT_NAME }}
+        gh release create ${{ env.PLUGIN_VERSION }} \
+            -R ${{ inputs.plugin_repo }} \
+            --target $(cd ${{ inputs.binary_name }} && git rev-parse HEAD) \
+            --notes-file release_notes.md \
+            ${{ env.ARTIFACT_NAME }}
