@@ -66,9 +66,9 @@ jobs:
         chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_Linux_x86_64"
         chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_MacOS_arm64"
         chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_MacOS_x86_64"
-    - name: Zip Artifact Bundle
+    - name: Zip Artifact Bundle using 7z
       run: |
-        (cd ${{ env.ARTIFACT_PATH }} && zip -9 -r ../../../${{ env.ARTIFACT_NAME }} .)
+        (cd ${{ env.ARTIFACT_PATH }} && 7z a -tzip -mx=9 ../../../${{ env.ARTIFACT_NAME }} *)
     - name: Reset Git Repo
       run: |
         (cd ${{ inputs.binary_name }} && git reset --hard)
