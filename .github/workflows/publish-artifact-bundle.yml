@@ -34,7 +34,7 @@ on:
 jobs:
   publish:
     name: Publish Artifact Bundle
-    runs-on: macOS-13
+    runs-on: macOS-15
     env:
       PLUGIN_VERSION: ${{ inputs.binary_version }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -66,20 +66,26 @@ jobs:
         chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_Linux_x86_64"
         chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_MacOS_arm64"
         chmod +x "${{ env.ARTIFACT_PATH }}/${{ inputs.binary_name }}_${{ env.PLUGIN_VERSION }}_MacOS_x86_64"
-    - name: Zip Artifact Bundle using 7z
+    - name: Zip Artifact Bundle
+      working-directory: ${{ env.ARTIFACT_PATH }}
       run: |
-        (cd ${{ env.ARTIFACT_PATH }} && 7z a -tzip -mx=9 ../../../${{ env.ARTIFACT_NAME }} *)
+        7z a -tzip -mx=9 "${{ env.ARTIFACT_NAME }}" *
     - name: Reset Git Repo
+      working-directory: ${{ inputs.binary_name }}
       run: |
-        (cd ${{ inputs.binary_name }} && git reset --hard)
+        git reset --hard
     - name: Update Package.swift
       run: |
         sed -i '' "s/checksum: \".*\"/checksum: \"$(shasum -a 256 ${{ env.ARTIFACT_NAME }} | sed 's/ .*//')\"/g" ${{ inputs.binary_name }}/Package.swift
         sed -i '' -E "s/\/[0-9]+\.[0-9]+\.[0-9]+\//\/${{ env.PLUGIN_VERSION }}\//" ${{ inputs.binary_name }}/Package.swift
         sed -i '' -E "s/(https:\/\/github.com\/csjones\/lefthook-plugin.git\", exact: \")([0-9]+\.[0-9]+\.[0-9]+)/\1${{ env.PLUGIN_VERSION }}/" ${{ inputs.binary_name }}/README.md
     - name: Push Changes to GitHub
+      working-directory: ${{ inputs.binary_name }}
       run: |
-        (cd ${{ inputs.binary_name }} && git commit -am "Updating ${{ inputs.binary_name }} to ${{ env.PLUGIN_VERSION }}" && git push origin)
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git commit -am "Updating ${{ inputs.binary_name }} to ${{ env.PLUGIN_VERSION }}"
+        git push origin
     - name: Get Release Notes from Binary Repo
       run: |
         gh release view ${{ inputs.binary_version }} \
@@ -88,8 +94,10 @@ jobs:
             --jq '.body' > release_notes.md
     - name: Create GitHub Release
       run: |
+        COMMIT_SHA=$(git -C ${{ inputs.binary_name }} rev-parse HEAD)
+        echo "$COMMIT_SHA"
         gh release create ${{ env.PLUGIN_VERSION }} \
             -R ${{ inputs.plugin_repo }} \
-            --target $(cd ${{ inputs.binary_name }} && git rev-parse HEAD) \
+            --target "$COMMIT_SHA" \
             --notes-file release_notes.md \
-            ${{ env.ARTIFACT_NAME }}
+            "${{ env.ARTIFACT_PATH }}/${{ env.ARTIFACT_NAME }}"
