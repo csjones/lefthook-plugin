@@ -33,7 +33,7 @@ let package = Package(
         ),
         .binaryTarget(
             name: "lefthook",
-            url: "https://github.com/csjones/lefthook-plugin/releases/download/2.0.11/lefthook.artifactbundle.zip",
+            url: "https://github.com/csjones/lefthook-plugin/releases/download/2.0.12/lefthook.artifactbundle.zip",
             checksum: ""
         ),
     ],
