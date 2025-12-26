@@ -76,7 +76,7 @@ jobs:
         git reset --hard
     - name: Update Package.swift
       run: |
-        sed -i '' "s/checksum: \".*\"/checksum: \"$(shasum -a 256 ${{ env.ARTIFACT_NAME }} | sed 's/ .*//')\"/g" ${{ inputs.binary_name }}/Package.swift
+        sed -i '' "s/checksum: \".*\"/checksum: \"$(shasum -a 256 ${{ env.ARTIFACT_PATH }}/${{ env.ARTIFACT_NAME }} | sed 's/ .*//')\"/g" ${{ inputs.binary_name }}/Package.swift
         sed -i '' -E "s/\/[0-9]+\.[0-9]+\.[0-9]+\//\/${{ env.PLUGIN_VERSION }}\//" ${{ inputs.binary_name }}/Package.swift
         sed -i '' -E "s/(https:\/\/github.com\/csjones\/lefthook-plugin.git\", exact: \")([0-9]+\.[0-9]+\.[0-9]+)/\1${{ env.PLUGIN_VERSION }}/" ${{ inputs.binary_name }}/README.md
     - name: Push Changes to GitHub
