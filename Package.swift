@@ -34,8 +34,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "lefthook",
-            url: "https://github.com/csjones/lefthook-plugin/releases/download/2.1.6/lefthook.artifactbundle.zip",
-            checksum: "e63013bf7a0857242f5a5215904700f280b89a087d348543014524268f52285c"
+            url: "https://github.com/csjones/lefthook-plugin/releases/download/2.1.7/lefthook.artifactbundle.zip",
+            checksum: "4fcb9894017e6c95147d7d9546cd339830e538bc52114eebefad92a31c01aaa9"
         ),
     ],
     swiftLanguageVersions: [.v5]
